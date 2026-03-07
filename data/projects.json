@@ -1,0 +1,160 @@
+{
+  "projects": [
+    {
+      "id": "1772914471385",
+      "title": "Accompagnement Réseaux Sociaux",
+      "tagline": "DA complète, écriture, tournage, montage et miniatures pour un entrepreneur",
+      "description": "Stratégie et création de contenu complète pour un entrepreneur proposant un accompagnement aux dépanneurs pour trouver des clients via Instagram. Un projet client de bout en bout.",
+      "metaDescription": "Direction artistique et création de contenu complète pour un compte Instagram d'accompagnement B2B.",
+      "tag": "Projet client · Stratégie & Contenu",
+      "count": "En cours",
+      "status": "in-progress",
+      "thumbnail": "",
+      "gallery": [],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-03-07T20:14:31.385Z"
+    },
+    {
+      "id": "saas-closing",
+      "title": "SaaS Closing",
+      "tagline": "Développement complet d'un outil qui apprend à négocier",
+      "description": "Développement complet d'un SaaS d'apprentissage à la négociation. Logo, développement full-stack et intégration d'une IA — projet réalisé de A à Z.",
+      "metaDescription": "SaaS de closing développé par Khalid LOTF — logo, développement full-stack et intégration IA.",
+      "tag": "SaaS · Dev · IA",
+      "count": "En cours",
+      "status": "in-progress",
+      "thumbnail": "",
+      "gallery": [],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-03-07T00:00:00.000Z"
+    },
+    {
+      "id": "agence-social-media",
+      "title": "Agence Social Media",
+      "tagline": "Logo, posts Instagram et site web pour une agence de communication",
+      "description": "Création de contenu complète pour une agence social media : logo, identité visuelle, posts Instagram optimisés pour l'engagement, et site web.",
+      "metaDescription": "Création complète pour une agence social media : logo, posts Instagram et site web. Projet réalisé par Khalid LOTF.",
+      "tag": "Identité visuelle",
+      "count": "Projet complet",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/agence.png",
+      "gallery": [
+        "/uploads/1772916640625-scyql616cf.png",
+        "/uploads/1772916640629-xso4qrujiw.jpg",
+        "/uploads/1772916640634-vfjn6xhj1f.jpg",
+        "/uploads/1772916640638-couiogk64u.jpg"
+      ],
+      "videos": [
+        "1171383455"
+      ],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "affiches-football",
+      "title": "Affiches Football",
+      "tagline": "Designs graphiques pour événements footballistiques",
+      "description": "Créations personnelles réalisées sur Photoshop pour développer mes compétences en design graphique. Ces affiches visent un rendu professionnel adapté aux réseaux sociaux sportifs.",
+      "metaDescription": "Affiches football réalisées sur Photoshop par Khalid LOTF. Designs graphiques pour événements sportifs.",
+      "tag": "Design graphique",
+      "count": "4 créations",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/affiches football.png",
+      "gallery": [
+        "/uploads/1772917017090-r93o41a2b7c.jpeg",
+        "/uploads/1772917017094-sv0eh7kqx1h.jpg",
+        "/uploads/1772917017099-iu9a4vyyd4p.jpg",
+        "/uploads/1772917017101-g06sh4r959k.jpg"
+      ],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "photos-match",
+      "title": "Photos Match",
+      "tagline": "Reportage photo pour l'association EMB de Bordeaux",
+      "description": "Reportage photo réalisé en tant que bénévole pour l'Association des Étudiants Marocains de Bordeaux (EMB). Ma mission : figer l'intensité du jeu et valoriser l'esprit d'équipe.",
+      "metaDescription": "Reportage photo lors de matchs de football pour l'Association des Étudiants Marocains de Bordeaux.",
+      "tag": "Photographie",
+      "count": "6 photos",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/Photos match foot.png",
+      "gallery": [
+        "/uploads/1772917387644-zz7tktv26ja.jpeg",
+        "/uploads/1772917387647-1zy4yq2qy0k.jpeg",
+        "/uploads/1772917387650-t55emdoyxhi.jpeg",
+        "/uploads/1772917387651-mojp1moph4.jpeg",
+        "/uploads/1772917387652-i2vhsedpb3a.jpeg",
+        "/uploads/1772917387654-z6x69lnay8p.png"
+      ],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "photos-tatouages",
+      "title": "Photos Tatouages",
+      "tagline": "Photographie de tatouages — prise de vue et retouche Lightroom",
+      "description": "Série réalisée dans le cadre du BUT MMI pour maîtriser la chaîne de production photographique. Prise de vue et retouche Lightroom pour mettre en valeur les contrastes de l'encre.",
+      "metaDescription": "Série photographique de tatouages — prise de vue et retouche Lightroom par Khalid LOTF.",
+      "tag": "Photographie",
+      "count": "7 photos",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/Photos-tatouages.png",
+      "gallery": [
+        "/uploads/1772917426865-6jbix3r4z46.jpg",
+        "/uploads/1772917426890-joow2uk0ofb.jpg",
+        "/uploads/1772917426908-3cl1786x27g.jpg",
+        "/uploads/1772917426917-1rst66l3w9k.jpg",
+        "/uploads/1772917426924-6q2ivqwqr3m.jpg",
+        "/uploads/1772917426936-2nbsdqkhxj9.jpg"
+      ],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "motion-design",
+      "title": "Motion Design",
+      "tagline": "Animations vidéo réalisées sur Adobe After Effects",
+      "description": "Animations vidéo réalisées sur Adobe After Effects dans le cadre du BUT MMI. Chaque projet explore différentes techniques d'animation pour créer des visuels dynamiques.",
+      "metaDescription": "Projets de motion design réalisés sur Adobe After Effects par Khalid LOTF, étudiant MMI à Bordeaux.",
+      "tag": "Motion Design",
+      "count": "2 vidéos",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/Motion design.png",
+      "gallery": [],
+      "videos": [
+        "1169880977",
+        "1169881025"
+      ],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "miniatures-youtube",
+      "title": "Miniatures YouTube",
+      "tagline": "Thumbnails conçues pour maximiser le taux de clics",
+      "description": "Conception de miniatures pour une chaîne YouTube personnelle (Gaming / GTA V RP). L'objectif : maximiser le taux de clics (CTR) avec des visuels percutants et immédiatement lisibles.",
+      "metaDescription": "Miniatures YouTube optimisées pour maximiser le taux de clics — design graphique percutant par Khalid LOTF.",
+      "tag": "Création de contenu",
+      "count": "6 miniatures",
+      "status": "completed",
+      "thumbnail": "/images/Logos projets/miniatures youtube.png",
+      "gallery": [
+        "/uploads/1772917461305-p567mgfs97.jpg",
+        "/uploads/1772917461309-6jdewjdsuqt.jpg",
+        "/uploads/1772917461311-6atuat11sfg.jpg",
+        "/uploads/1772917461313-tv7rn32jn6e.jpg",
+        "/uploads/1772917461314-u9ckkifv7u.jpg",
+        "/uploads/1772917461315-cic9y4h9pon.jpg"
+      ],
+      "videos": [],
+      "link": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ]
+}

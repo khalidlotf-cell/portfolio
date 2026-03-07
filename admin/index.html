@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Khalid LOTF</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent:      #d97060;
+      --accent-h:    #bf5a4a;
+      --accent-bg:   rgba(217,112,96,.08);
+      --bg:          #f7f6f3;
+      --surface:     #ffffff;
+      --border:      #e2e0db;
+      --text:        #1a1a1a;
+      --muted:       #6b6b6b;
+      --danger:      #e05252;
+      --danger-bg:   rgba(224,82,82,.08);
+      --success:     #4caf50;
+      --radius:      .75rem;
+      --shadow:      0 4px 16px rgba(0,0,0,.07);
+    }
+    html { height: 100%; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1,h2,h3 { font-family: 'Sora', sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: 'Poppins', sans-serif; cursor: pointer; border: none; }
+    input, textarea, select {
+      font-family: 'Poppins', sans-serif;
+      font-size: .875rem;
+      color: var(--text);
+    }
+
+    /* ── Login Screen ─────────────────────────────── */
+    #loginScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: var(--shadow);
+    }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.75rem;
+    }
+    .login-logo span {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    .login-card h1 {
+      font-size: 1.4rem;
+      margin-bottom: .4rem;
+    }
+    .login-card p {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+    }
+    .field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.25rem; }
+    .field label { font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .field input, .field textarea, .field select {
+      padding: .75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      background: var(--bg);
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .75rem 1.5rem;
+      border-radius: .5rem;
+      font-size: .85rem;
+      font-weight: 600;
+      transition: background .2s, transform .15s;
+      cursor: pointer;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-full { width: 100%; justify-content: center; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(224,82,82,.2); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-sm { padding: .45rem .9rem; font-size: .75rem; }
+    #loginError {
+      font-size: .8rem;
+      color: var(--danger);
+      margin-top: .5rem;
+      display: none;
+    }
+
+    /* ── App Layout ───────────────────────────────── */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+
+    /* Header */
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(247,246,243,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .admin-header-title {
+      font-family: 'Sora', sans-serif;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .admin-header-sep { color: var(--border); }
+    #viewTitle {
+      font-family: 'Sora', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Main */
+    .admin-main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Toast ────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--text);
+      color: #fff;
+      padding: .75rem 1.25rem;
+      border-radius: .5rem;
+      font-size: .8rem;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform .3s, opacity .3s;
+      z-index: 999;
+      max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--success); }
+    #toast.error { background: var(--danger); }
+
+    /* ── View: Liste projets ──────────────────────── */
+    #viewList { display: none; }
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .list-header h2 { font-size: 1.5rem; }
+    .list-header p { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    .projects-table {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .table-head {
+      display: grid;
+      grid-template-columns: 56px 1fr 140px 120px 100px;
+      padding: .65rem 1.25rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .table-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 140px 120px 100px;
+      align-items: center;
+      padding: .85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: var(--bg); }
+
+    .row-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: .5rem;
+      overflow: hidden;
+      background: var(--accent-bg);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .row-thumb-placeholder { font-size: 1.2rem; }
+
+    .row-info h3 { font-size: .875rem; font-weight: 600; margin-bottom: .15rem; }
+    .row-info p { font-size: .75rem; color: var(--muted); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .25rem .7rem;
+      border-radius: 2rem;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .badge-completed { background: rgba(76,175,80,.1); color: #3a8a3e; }
+    .badge-progress  { background: var(--accent-bg); color: var(--accent); }
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .row-tag { font-size: .75rem; color: var(--muted); }
+
+    .row-actions { display: flex; gap: .5rem; justify-content: flex-end; }
+
+    .empty-state {
+      padding: 3rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state p { font-size: .9rem; margin-top: .5rem; }
+
+    /* ── View: Formulaire projet ──────────────────── */
+    #viewForm { display: none; }
+    .form-back {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .form-back:hover { color: var(--accent); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .form-grid .field-full { grid-column: 1 / -1; }
+    .field textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: .75rem;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--accent-bg); }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+    }
+    .upload-zone p { font-size: .8rem; color: var(--muted); margin-top: .5rem; }
+    .upload-zone strong { font-size: .875rem; color: var(--text); }
+
+    .upload-progress {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: .75rem;
+      overflow: hidden;
+      display: none;
+    }
+    .upload-progress-bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width .3s;
+    }
+
+    /* Gallery preview */
+    .gallery-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: .75rem;
+      margin-top: .875rem;
+    }
+    .gallery-thumb {
+      border-radius: .5rem;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .gallery-thumb-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery-thumb-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .35rem .5rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      gap: .5rem;
+    }
+    .gallery-thumb-footer span {
+      font-size: .65rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gallery-thumb-remove {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: .25rem;
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-size: .7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid rgba(224,82,82,.2);
+      transition: background .15s;
+    }
+    .gallery-thumb-remove:hover { background: var(--danger); color: #fff; }
+
+    /* Video list */
+    .video-item {
+      display: flex;
+      gap: .75rem;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      overflow: hidden;
+    }
+    .video-thumb {
+      width: 100px;
+      height: 60px;
+      flex-shrink: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-info { flex: 1; min-width: 0; padding: .5rem 0; }
+    .video-info span { font-size: .78rem; color: var(--muted); display: block; }
+    .video-info strong { font-size: .82rem; color: var(--text); }
+    .video-item-actions { padding: 0 .75rem; }
+
+    .thumbnail-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: .5rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      margin-top: .5rem;
+    }
+    .thumbnail-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .form-actions {
+      display: flex;
+      gap: .75rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Loader */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .table-head, .table-row {
+        grid-template-columns: 44px 1fr 90px;
+      }
+      .table-head .col-tag,
+      .table-row .row-tag,
+      .table-head .col-status { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .field-full { grid-column: 1; }
+      .admin-main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ──────────────────────────────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="36" height="36" fill="none">
+        <rect width="32" height="32" rx="7" fill="#d97060"/>
+        <text x="16" y="22" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="-0.5">KL</text>
+      </svg>
+      <span>Admin Portfolio</span>
+    </div>
+    <h1>Connexion</h1>
+    <p>Accès réservé à l'administration du portfolio.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label for="passwordInput">Mot de passe</label>
+        <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <p id="loginError">Mot de passe incorrect.</p>
+      <button type="submit" class="btn btn-primary btn-full">
+        Accéder au panel
+        <div class="spinner" id="loginSpinner"></div>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── APP ────────────────────────────────────────────────────────────── -->
+<div id="app">
+
+  <header class="admin-header">
+    <div class="admin-header-left">
+      <a href="/" title="Voir le portfolio">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+          <rect width="32" height="32" rx="7" fill="#d97060"/>
+          <text x="16" y="22" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="-0.5">KL</text>
+        </svg>
+      </a>
+      <span class="admin-header-sep">·</span>
+      <span class="admin-header-title">Admin</span>
+      <span class="admin-header-sep">·</span>
+      <span id="viewTitle">Projets</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn">Déconnexion</button>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ── Vue : Liste ────────────────────────────── -->
+    <div id="viewList">
+      <div class="list-header">
+        <div>
+          <h2>Projets</h2>
+          <p id="projectCount">Chargement...</p>
+        </div>
+        <button class="btn btn-primary" id="addBtn">+ Nouveau projet</button>
+      </div>
+
+      <div class="projects-table">
+        <div class="table-head">
+          <div></div>
+          <div>Titre</div>
+          <div class="col-status">Statut</div>
+          <div class="col-tag">Catégorie</div>
+          <div style="text-align:right">Actions</div>
+        </div>
+        <div id="projectRows">
+          <div class="empty-state">
+            <p>Chargement des projets...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Vue : Formulaire ───────────────────────── -->
+    <div id="viewForm">
+      <button class="form-back" id="backToList">← Retour à la liste</button>
+
+      <form id="projectForm">
+        <input type="hidden" id="projectId">
+
+        <div class="form-grid">
+          <div class="field field-full">
+            <label for="fTitle">Titre *</label>
+            <input type="text" id="fTitle" placeholder="Ex: Motion Design" required>
+          </div>
+
+          <div class="field field-full">
+            <label for="fTagline">Tagline (sous-titre court)</label>
+            <input type="text" id="fTagline" placeholder="Ex: Animations réalisées sur After Effects">
+          </div>
+
+          <div class="field field-full">
+            <label for="fDescription">Description complète</label>
+            <textarea id="fDescription" rows="4" placeholder="Décris le projet en détail..."></textarea>
+          </div>
+
+          <div class="field field-full">
+            <label for="fMetaDescription">Meta description (SEO, ~155 caractères)</label>
+            <textarea id="fMetaDescription" rows="2" placeholder="Résumé pour les moteurs de recherche..."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="fTag">Catégorie / Tag</label>
+            <input type="text" id="fTag" placeholder="Ex: Design graphique, Photographie...">
+          </div>
+
+          <div class="field">
+            <label for="fCount">Compteur</label>
+            <input type="text" id="fCount" placeholder="Ex: 6 photos, Projet complet...">
+          </div>
+
+          <div class="field field-full">
+            <label for="fStatus">Statut</label>
+            <select id="fStatus">
+              <option value="completed">Terminé</option>
+              <option value="in-progress">En cours / Bientôt disponible</option>
+            </select>
+          </div>
+
+          <!-- Miniature -->
+          <div class="field field-full">
+            <label>Image principale (miniature)</label>
+            <div class="upload-zone" id="thumbZone">
+              <input type="file" id="thumbInput" accept="image/*">
+              <strong>Clique ou glisse une image</strong>
+              <p>PNG, JPG, WEBP — max 15 MB</p>
+              <div class="upload-progress" id="thumbProgress">
+                <div class="upload-progress-bar" id="thumbProgressBar"></div>
+              </div>
+            </div>
+            <div id="thumbPreview" style="display:none;align-items:center;gap:.75rem;margin-top:.5rem">
+              <div class="thumbnail-preview" style="margin-top:0">
+                <img id="thumbPreviewImg" src="" alt="">
+              </div>
+              <button type="button" class="btn btn-danger btn-sm" onclick="removeThumbnail()">Supprimer</button>
+            </div>
+            <input type="hidden" id="fThumbnail">
+          </div>
+
+          <!-- Galerie -->
+          <div class="field field-full">
+            <label>Galerie d'images</label>
+            <div class="upload-zone" id="galleryZone">
+              <input type="file" id="galleryInput" accept="image/*" multiple>
+              <strong>Clique ou glisse des images</strong>
+              <p>Plusieurs images à la fois acceptées</p>
+              <div class="upload-progress" id="galleryProgress">
+                <div class="upload-progress-bar" id="galleryProgressBar"></div>
+              </div>
+            </div>
+            <div class="gallery-preview" id="galleryPreview"></div>
+            <input type="hidden" id="fGallery" value="[]">
+          </div>
+
+          <!-- Vidéos Vimeo -->
+          <div class="field field-full">
+            <label>Vidéos Vimeo</label>
+            <div style="display:flex;gap:.5rem;align-items:stretch">
+              <input type="text" id="vimeoInput" placeholder="URL ou ID Vimeo — ex: 1169881025" style="flex:1;padding:.75rem 1rem;border:1px solid var(--border);border-radius:.5rem;background:var(--bg);">
+              <button type="button" class="btn btn-ghost" onclick="addVimeoVideo()">+ Ajouter</button>
+            </div>
+            <div id="videosList" style="margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem"></div>
+            <input type="hidden" id="fVideos" value="[]">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="cancelForm">Annuler</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            <span id="saveBtnText">Enregistrer</span>
+            <div class="spinner" id="saveSpinner"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script>
+// ── Utils ──────────────────────────────────────────────────────────────────────
+
+function showToast(msg, type = 'default') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+function showView(name) {
+  document.getElementById('viewList').style.display = 'none';
+  document.getElementById('viewForm').style.display = 'none';
+  document.getElementById('viewTitle').textContent =
+    name === 'list' ? 'Projets' : (currentProject ? 'Modifier le projet' : 'Nouveau projet');
+  if (name === 'list') document.getElementById('viewList').style.display = 'block';
+  if (name === 'form') document.getElementById('viewForm').style.display = 'block';
+}
+
+async function api(method, url, body) {
+  const opts = { method, headers: {} };
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  const r = await fetch(url, opts);
+  if (!r.ok) throw new Error((await r.json()).error || 'Erreur');
+  return r.json();
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────────────
+
+async function checkAuth() {
+  const { ok } = await fetch('/admin/check').then(r => r.json());
+  if (ok) showApp();
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  loadProjects();
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pw  = document.getElementById('passwordInput').value;
+  const err = document.getElementById('loginError');
+  const sp  = document.getElementById('loginSpinner');
+  err.style.display = 'none';
+  sp.style.display  = 'block';
+  try {
+    await api('POST', '/admin/login', { password: pw });
+    showApp();
+  } catch {
+    err.style.display = 'block';
+  } finally {
+    sp.style.display = 'none';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch('/admin/logout', { method: 'POST' });
+  location.reload();
+});
+
+// ── Projects List ──────────────────────────────────────────────────────────────
+
+let projects = [];
+
+async function loadProjects() {
+  showView('list');
+  const rows = document.getElementById('projectRows');
+  rows.innerHTML = '<div class="empty-state"><p>Chargement...</p></div>';
+  try {
+    projects = await api('GET', '/api/projects');
+    renderList();
+  } catch {
+    rows.innerHTML = '<div class="empty-state"><p>Erreur lors du chargement.</p></div>';
+  }
+}
+
+function renderList() {
+  const count = document.getElementById('projectCount');
+  const rows  = document.getElementById('projectRows');
+  count.textContent = `${projects.length} projet${projects.length > 1 ? 's' : ''}`;
+
+  if (!projects.length) {
+    rows.innerHTML = '<div class="empty-state"><p>Aucun projet. Créez le premier !</p></div>';
+    return;
+  }
+
+  rows.innerHTML = projects.map(p => `
+    <div class="table-row">
+      <div class="row-thumb">
+        ${p.thumbnail
+          ? `<img src="${p.thumbnail}" alt="${p.title}" onerror="this.style.display='none'">`
+          : `<span class="row-thumb-placeholder">🎨</span>`}
+      </div>
+      <div class="row-info">
+        <h3>${p.title}</h3>
+        <p>${p.tagline || '—'}</p>
+      </div>
+      <div class="col-status">
+        <span class="badge ${p.status === 'completed' ? 'badge-completed' : 'badge-progress'}">
+          ${p.status === 'completed' ? 'Terminé' : 'En cours'}
+        </span>
+      </div>
+      <div class="row-tag col-tag">${p.tag || '—'}</div>
+      <div class="row-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editProject('${p.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProject('${p.id}', '${p.title.replace(/'/g,"\\'")}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('addBtn').addEventListener('click', () => openForm(null));
+
+// ── Delete ─────────────────────────────────────────────────────────────────────
+
+async function deleteProject(id, title) {
+  if (!confirm(`Supprimer "${title}" ? Cette action est irréversible.`)) return;
+  try {
+    await api('DELETE', `/api/projects/${id}`);
+    showToast('Projet supprimé', 'success');
+    await loadProjects();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+// ── Form ───────────────────────────────────────────────────────────────────────
+
+let currentProject = null;
+let galleryImages  = []; // array of { url }
+let projectVideos  = []; // array of vimeo IDs
+
+function editProject(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  openForm(p);
+}
+
+function openForm(project) {
+  currentProject = project;
+  galleryImages  = project ? (project.gallery || []).map(u => ({ url: u })) : [];
+  projectVideos  = project ? (project.videos  || []) : [];
+
+  document.getElementById('projectId').value     = project?.id || '';
+  document.getElementById('fTitle').value        = project?.title || '';
+  document.getElementById('fTagline').value      = project?.tagline || '';
+  document.getElementById('fDescription').value  = project?.description || '';
+  document.getElementById('fMetaDescription').value = project?.metaDescription || '';
+  document.getElementById('fTag').value          = project?.tag || '';
+  document.getElementById('fCount').value        = project?.count || '';
+  document.getElementById('fStatus').value       = project?.status || 'completed';
+  document.getElementById('fThumbnail').value    = project?.thumbnail || '';
+  document.getElementById('fGallery').value      = JSON.stringify(galleryImages.map(i => i.url));
+  document.getElementById('fVideos').value       = JSON.stringify(projectVideos);
+
+  // Thumbnail preview
+  const prev = document.getElementById('thumbPreview');
+  if (project?.thumbnail) {
+    document.getElementById('thumbPreviewImg').src = project.thumbnail;
+    prev.style.display = 'flex';
+  } else {
+    prev.style.display = 'none';
+  }
+
+  renderGalleryPreview();
+  renderVideosList();
+  showView('form');
+}
+
+document.getElementById('backToList').addEventListener('click', () => loadProjects());
+document.getElementById('cancelForm').addEventListener('click', () => loadProjects());
+
+// ── Upload helper ──────────────────────────────────────────────────────────────
+
+async function uploadFiles(files, progressEl, progressBarEl) {
+  progressEl.style.display = '';
+  const fd = new FormData();
+  files.forEach(f => fd.append('images', f));
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        progressBarEl.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+      }
+    });
+    xhr.addEventListener('load', () => {
+      progressEl.style.display = 'none';
+      progressBarEl.style.width = '0%';
+      if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+      else reject(new Error('Erreur upload'));
+    });
+    xhr.addEventListener('error', () => reject(new Error('Erreur réseau')));
+    xhr.open('POST', '/api/upload');
+    xhr.send(fd);
+  });
+}
+
+function removeThumbnail() {
+  document.getElementById('fThumbnail').value = '';
+  document.getElementById('thumbPreviewImg').src = '';
+  document.getElementById('thumbPreview').style.display = 'none';
+  document.getElementById('thumbInput').value = '';
+}
+
+// Thumbnail upload
+document.getElementById('thumbInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const { urls } = await uploadFiles(
+      [file],
+      document.getElementById('thumbProgress'),
+      document.getElementById('thumbProgressBar')
+    );
+    document.getElementById('fThumbnail').value = urls[0];
+    document.getElementById('thumbPreviewImg').src = urls[0];
+    document.getElementById('thumbPreview').style.display = 'flex';
+    showToast('Image principale uploadée', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+});
+
+// Gallery upload
+document.getElementById('galleryInput').addEventListener('change', async e => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  try {
+    const { urls } = await uploadFiles(
+      files,
+      document.getElementById('galleryProgress'),
+      document.getElementById('galleryProgressBar')
+    );
+    urls.forEach(url => galleryImages.push({ url }));
+    document.getElementById('fGallery').value = JSON.stringify(galleryImages.map(i => i.url));
+    renderGalleryPreview();
+    showToast(`${urls.length} image${urls.length > 1 ? 's' : ''} ajoutée${urls.length > 1 ? 's' : ''}`, 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+});
+
+// Drag & drop
+['thumbZone','galleryZone'].forEach(id => {
+  const zone = document.getElementById(id);
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag');
+    const input = zone.querySelector('input[type="file"]');
+    // Déclencher l'event change manuellement
+    const dt = new DataTransfer();
+    Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
+    input.files = dt.files;
+    input.dispatchEvent(new Event('change'));
+  });
+});
+
+function renderGalleryPreview() {
+  const container = document.getElementById('galleryPreview');
+  if (!galleryImages.length) { container.innerHTML = ''; return; }
+  container.innerHTML = galleryImages.map((img, i) => {
+    const name = img.url.split('/').pop();
+    return `
+      <div class="gallery-thumb">
+        <img class="gallery-thumb-img" src="${img.url}" alt="">
+        <div class="gallery-thumb-footer">
+          <span title="${name}">${name}</span>
+          <button class="gallery-thumb-remove" type="button" onclick="removeGalleryImage(${i})" title="Supprimer">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function removeGalleryImage(index) {
+  galleryImages.splice(index, 1);
+  document.getElementById('fGallery').value = JSON.stringify(galleryImages.map(i => i.url));
+  renderGalleryPreview();
+}
+
+// ── Vimeo videos ───────────────────────────────────────────────────────────────
+
+function extractVimeoId(input) {
+  input = input.trim();
+  const match = input.match(/(?:vimeo\.com\/(?:video\/)?|player\.vimeo\.com\/video\/)(\d+)/);
+  if (match) return match[1];
+  if (/^\d+$/.test(input)) return input;
+  return null;
+}
+
+function addVimeoVideo() {
+  const input = document.getElementById('vimeoInput');
+  const id = extractVimeoId(input.value);
+  if (!id) { showToast('URL Vimeo invalide', 'error'); return; }
+  if (projectVideos.includes(id)) { showToast('Vidéo déjà ajoutée', 'error'); return; }
+  projectVideos.push(id);
+  input.value = '';
+  document.getElementById('fVideos').value = JSON.stringify(projectVideos);
+  renderVideosList();
+  showToast('Vidéo ajoutée', 'success');
+}
+
+function removeVideo(id) {
+  projectVideos = projectVideos.filter(v => v !== id);
+  document.getElementById('fVideos').value = JSON.stringify(projectVideos);
+  renderVideosList();
+}
+
+function renderVideosList() {
+  const container = document.getElementById('videosList');
+  if (!projectVideos.length) { container.innerHTML = ''; return; }
+  container.innerHTML = projectVideos.map(id => `
+    <div class="video-item">
+      <div class="video-thumb">
+        <img src="https://vumbnail.com/${id}.jpg" alt="Vimeo ${id}" onerror="this.style.display='none'">
+      </div>
+      <div class="video-info">
+        <span>Vimeo</span>
+        <strong>${id}</strong>
+      </div>
+      <div class="video-item-actions">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeVideo('${id}')">Supprimer</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Save project ───────────────────────────────────────────────────────────────
+
+document.getElementById('projectForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id    = document.getElementById('projectId').value;
+  const btn   = document.getElementById('saveBtn');
+  const sp    = document.getElementById('saveSpinner');
+  const txt   = document.getElementById('saveBtnText');
+
+  btn.disabled = true;
+  sp.style.display = 'block';
+  txt.textContent  = 'Enregistrement...';
+
+  const body = {
+    title:           document.getElementById('fTitle').value.trim(),
+    tagline:         document.getElementById('fTagline').value.trim(),
+    description:     document.getElementById('fDescription').value.trim(),
+    metaDescription: document.getElementById('fMetaDescription').value.trim(),
+    tag:             document.getElementById('fTag').value.trim(),
+    count:           document.getElementById('fCount').value.trim(),
+    status:          document.getElementById('fStatus').value,
+    thumbnail:       document.getElementById('fThumbnail').value,
+    gallery:         document.getElementById('fGallery').value,
+    videos:          document.getElementById('fVideos').value
+  };
+
+  try {
+    if (id) {
+      await api('PUT', `/api/projects/${id}`, body);
+      showToast('Projet mis à jour ✓', 'success');
+    } else {
+      await api('POST', '/api/projects', body);
+      showToast('Projet créé ✓', 'success');
+    }
+    await loadProjects();
+  } catch (err) {
+    showToast(err.message, 'error');
+    btn.disabled = false;
+    sp.style.display = 'none';
+    txt.textContent  = 'Enregistrer';
+  }
+});
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+
+checkAuth();
+</script>
+</body>
+</html>
