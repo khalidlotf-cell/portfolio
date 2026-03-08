@@ -7,6 +7,20 @@ const path     = require('path');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+
+// ── Cloudinary ────────────────────────────────────────────────────────────────
+let cloudinary = null;
+if (process.env.CLOUDINARY_CLOUD_NAME) {
+  cloudinary = require('cloudinary').v2;
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+  console.log('  Storage → Cloudinary');
+} else {
+  console.log('  Storage → local (uploads/)');
+}
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin2026';
 
 // ── Base de données ───────────────────────────────────────────────────────────
@@ -251,7 +265,7 @@ app.delete('/api/projects/:id', requireAuth, async (req, res) => {
 // ── Upload images ─────────────────────────────────────────────────────────────
 
 const uploadMiddleware = multer({
-  storage: multer.diskStorage({
+  storage: cloudinary ? multer.memoryStorage() : multer.diskStorage({
     destination(req, file, cb) {
       const dir = path.join(__dirname, 'uploads');
       fs.mkdirSync(dir, { recursive: true });
@@ -269,12 +283,30 @@ const uploadMiddleware = multer({
 }).array('images', 20);
 
 app.post('/api/upload', requireAuth, (req, res) => {
-  uploadMiddleware(req, res, (err) => {
+  uploadMiddleware(req, res, async (err) => {
     if (err) {
       console.error('Upload error:', err.message);
       return res.status(400).json({ error: err.message });
     }
-    res.json({ urls: (req.files || []).map(f => '/uploads/' + f.filename) });
+    try {
+      if (cloudinary) {
+        const urls = await Promise.all((req.files || []).map(file =>
+          new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: 'portfolio', resource_type: 'image' },
+              (error, result) => error ? reject(error) : resolve(result.secure_url)
+            );
+            stream.end(file.buffer);
+          })
+        ));
+        res.json({ urls });
+      } else {
+        res.json({ urls: (req.files || []).map(f => '/uploads/' + f.filename) });
+      }
+    } catch (e) {
+      console.error('Cloudinary error:', e.message);
+      res.status(500).json({ error: e.message });
+    }
   });
 });
 
