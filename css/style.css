@@ -1179,13 +1179,13 @@ footer {
 @media (max-width: 768px) {
   .burger { display: inline-flex; }
 
-  .nav-container { padding: 0 1.5rem; }
+  .nav-container { padding: 0 1.5rem; position: relative; }
 
   .nav-links {
     position: absolute;
-    top: calc(var(--nav-h) + 6px);
-    left: 1rem;
-    right: 1rem;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
     display: none;
     flex-direction: column;
     gap: 0;
