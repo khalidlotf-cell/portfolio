@@ -366,6 +366,37 @@ app.get('/projets/:id', async (req, res, next) => {
   } catch (e) { res.status(500).send('Erreur serveur'); }
 });
 
+// ── Migration JSON → PostgreSQL ───────────────────────────────────────────────
+
+app.get('/admin/migrate', requireAuth, async (req, res) => {
+  if (!pool) return res.json({ ok: false, message: 'Pas de PostgreSQL connecté' });
+  try {
+    const data = readJSON();
+    let inserted = 0, skipped = 0;
+    for (const p of data.projects) {
+      const exists = await dbGetById(p.id);
+      if (exists) { skipped++; continue; }
+      await dbCreate({
+        id:              p.id,
+        title:           p.title           || 'Sans titre',
+        tagline:         p.tagline         || '',
+        description:     p.description     || '',
+        metaDescription: p.metaDescription || '',
+        tag:             p.tag             || '',
+        count:           p.count           || '',
+        status:          p.status          || 'completed',
+        thumbnail:       p.thumbnail       || '',
+        gallery:         p.gallery         || [],
+        videos:          p.videos          || [],
+        link:            p.link            || '',
+        createdAt:       p.createdAt       || new Date().toISOString()
+      });
+      inserted++;
+    }
+    res.json({ ok: true, inserted, skipped });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Fichiers statiques ────────────────────────────────────────────────────────
 
 app.use(express.static(__dirname));
