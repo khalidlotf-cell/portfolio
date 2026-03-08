@@ -299,14 +299,10 @@
       main { padding: 0 !important; }
     }
 
-    /* ── Mobile : zoom pour garder le layout PC ── */
+    /* ── Mobile : zoom dynamique (calculé via JS) ── */
     @media (max-width: 860px) {
-      .cv-wrapper { padding: .5rem; overflow: hidden; }
-      .cv-card { zoom: 0.65; }
+      .cv-wrapper { padding: .25rem; overflow: hidden; }
       .cv-print-btn { display: none; }
-    }
-    @media (max-width: 540px) {
-      .cv-card { zoom: 0.42; }
     }
   </style>
 </head>
@@ -537,5 +533,22 @@
 </footer>
 
 <script src="/js/script.js"></script>
+<script>
+  (function() {
+    var card = document.querySelector('.cv-card');
+    if (!card) return;
+    function scaleCv() {
+      var vw = window.innerWidth;
+      if (vw >= 880) {
+        card.style.zoom = '';
+        return;
+      }
+      var scale = (vw - 8) / 880;
+      card.style.zoom = Math.max(0.3, scale);
+    }
+    scaleCv();
+    window.addEventListener('resize', scaleCv);
+  })();
+</script>
 </body>
 </html>
