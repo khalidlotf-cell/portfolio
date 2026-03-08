@@ -60,9 +60,34 @@ async function initDB() {
       created_at    TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS contacts (
+      id         SERIAL PRIMARY KEY,
+      name       TEXT NOT NULL,
+      email      TEXT NOT NULL,
+      subject    TEXT DEFAULT '',
+      message    TEXT NOT NULL,
+      read       BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
 }
 
 // ── Helpers JSON (fallback local) ─────────────────────────────────────────────
+
+const CONTACTS_FILE = path.join(__dirname, 'data', 'contacts.json');
+
+function readContacts() {
+  if (!fs.existsSync(CONTACTS_FILE)) {
+    fs.mkdirSync(path.dirname(CONTACTS_FILE), { recursive: true });
+    fs.writeFileSync(CONTACTS_FILE, JSON.stringify([], null, 2));
+  }
+  return JSON.parse(fs.readFileSync(CONTACTS_FILE, 'utf8'));
+}
+
+function writeContacts(data) {
+  fs.writeFileSync(CONTACTS_FILE, JSON.stringify(data, null, 2));
+}
 
 function readJSON() {
   if (!fs.existsSync(DATA_FILE)) {
@@ -260,6 +285,64 @@ app.put('/api/projects/:id', requireAuth, async (req, res) => {
 app.delete('/api/projects/:id', requireAuth, async (req, res) => {
   try { await dbDelete(req.params.id); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── API Contact ───────────────────────────────────────────────────────────────
+
+app.post('/api/contact', async (req, res) => {
+  const { name, email, subject, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'Nom, email et message requis' });
+  }
+  try {
+    if (pool) {
+      await pool.query(
+        'INSERT INTO contacts (name, email, subject, message) VALUES ($1, $2, $3, $4)',
+        [name.trim(), email.trim(), (subject || '').trim(), message.trim()]
+      );
+    } else {
+      const contacts = readContacts();
+      contacts.unshift({ id: Date.now(), name: name.trim(), email: email.trim(), subject: (subject || '').trim(), message: message.trim(), read: false, created_at: new Date().toISOString() });
+      writeContacts(contacts);
+    }
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/contacts', requireAuth, async (req, res) => {
+  try {
+    if (pool) {
+      const r = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC');
+      res.json(r.rows);
+    } else {
+      res.json(readContacts());
+    }
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.patch('/api/contacts/:id/read', requireAuth, async (req, res) => {
+  try {
+    if (pool) {
+      await pool.query('UPDATE contacts SET read = TRUE WHERE id = $1', [req.params.id]);
+    } else {
+      const contacts = readContacts();
+      const c = contacts.find(c => String(c.id) === req.params.id);
+      if (c) c.read = true;
+      writeContacts(contacts);
+    }
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/contacts/:id', requireAuth, async (req, res) => {
+  try {
+    if (pool) {
+      await pool.query('DELETE FROM contacts WHERE id = $1', [req.params.id]);
+    } else {
+      writeContacts(readContacts().filter(c => String(c.id) !== req.params.id));
+    }
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── Upload images ─────────────────────────────────────────────────────────────

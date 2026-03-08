@@ -510,7 +510,11 @@
       <span class="admin-header-sep">·</span>
       <span id="viewTitle">Projets</span>
     </div>
-    <button class="btn btn-ghost btn-sm" id="logoutBtn">Déconnexion</button>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <button class="btn btn-ghost btn-sm" id="navProjects" onclick="switchTab('projects')">Projets</button>
+      <button class="btn btn-ghost btn-sm" id="navMessages" onclick="switchTab('messages')">Messages <span id="unreadBadge" style="display:none;background:#d97060;color:#fff;border-radius:2rem;padding:.1rem .45rem;font-size:.65rem;font-weight:700;margin-left:.2rem">0</span></button>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">Déconnexion</button>
+    </div>
   </header>
 
   <main class="admin-main">
@@ -538,6 +542,19 @@
             <p>Chargement des projets...</p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── Vue : Messages ────────────────────────── -->
+    <div id="viewMessages" style="display:none">
+      <div class="list-header">
+        <div>
+          <h2>Messages reçus</h2>
+          <p id="messageCount">Chargement...</p>
+        </div>
+      </div>
+      <div id="messagesList" class="projects-table">
+        <div class="empty-state"><p>Chargement...</p></div>
       </div>
     </div>
 
@@ -664,10 +681,22 @@ function showToast(msg, type = 'default') {
 function showView(name) {
   document.getElementById('viewList').style.display = 'none';
   document.getElementById('viewForm').style.display = 'none';
-  document.getElementById('viewTitle').textContent =
-    name === 'list' ? 'Projets' : (currentProject ? 'Modifier le projet' : 'Nouveau projet');
-  if (name === 'list') document.getElementById('viewList').style.display = 'block';
-  if (name === 'form') document.getElementById('viewForm').style.display = 'block';
+  document.getElementById('viewMessages').style.display = 'none';
+  if (name === 'list') {
+    document.getElementById('viewList').style.display = 'block';
+    document.getElementById('viewTitle').textContent = 'Projets';
+  } else if (name === 'form') {
+    document.getElementById('viewForm').style.display = 'block';
+    document.getElementById('viewTitle').textContent = currentProject ? 'Modifier le projet' : 'Nouveau projet';
+  } else if (name === 'messages') {
+    document.getElementById('viewMessages').style.display = 'block';
+    document.getElementById('viewTitle').textContent = 'Messages';
+  }
+}
+
+function switchTab(tab) {
+  if (tab === 'projects') loadProjects();
+  if (tab === 'messages') loadMessages();
 }
 
 async function api(method, url, body) {
@@ -689,6 +718,12 @@ function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   loadProjects();
+  // Charger le badge non lus en arrière-plan
+  fetch('/api/contacts').then(r => r.json()).then(msgs => {
+    const unread = msgs.filter(m => !m.read).length;
+    const badge = document.getElementById('unreadBadge');
+    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
+  }).catch(() => {});
 }
 
 document.getElementById('loginForm').addEventListener('submit', async e => {
@@ -1029,6 +1064,87 @@ document.getElementById('projectForm').addEventListener('submit', async e => {
     txt.textContent  = 'Enregistrer';
   }
 });
+
+// ── Messages ───────────────────────────────────────────────────────────────────
+
+let messages = [];
+
+async function loadMessages() {
+  showView('messages');
+  const list = document.getElementById('messagesList');
+  list.innerHTML = '<div class="empty-state"><p>Chargement...</p></div>';
+  try {
+    messages = await api('GET', '/api/contacts');
+    renderMessages();
+  } catch {
+    list.innerHTML = '<div class="empty-state"><p>Erreur lors du chargement.</p></div>';
+  }
+}
+
+function renderMessages() {
+  const list = document.getElementById('messagesList');
+  const count = document.getElementById('messageCount');
+  const unread = messages.filter(m => !m.read).length;
+  count.textContent = `${messages.length} message${messages.length > 1 ? 's' : ''}${unread ? ` · ${unread} non lu${unread > 1 ? 's' : ''}` : ''}`;
+
+  const badge = document.getElementById('unreadBadge');
+  if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
+
+  if (!messages.length) {
+    list.innerHTML = '<div class="empty-state"><p>Aucun message pour l\'instant.</p></div>';
+    return;
+  }
+
+  list.innerHTML = messages.map(m => {
+    const date = new Date(m.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return `
+      <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);${!m.read ? 'background:rgba(217,112,96,.04);' : ''}cursor:pointer" onclick="toggleMessage('${m.id}')">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.75rem;min-width:0">
+            ${!m.read ? '<span style="width:8px;height:8px;border-radius:50%;background:#d97060;flex-shrink:0"></span>' : '<span style="width:8px;height:8px;flex-shrink:0"></span>'}
+            <div style="min-width:0">
+              <div style="font-weight:600;font-size:.875rem">${m.name} <span style="font-weight:400;color:var(--muted);font-size:.8rem">&lt;${m.email}&gt;</span></div>
+              <div style="font-size:.78rem;color:var(--muted);margin-top:.1rem">${m.subject || '(sans sujet)'}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;flex-shrink:0">
+            <span style="font-size:.72rem;color:var(--muted)">${date}</span>
+            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMessage('${m.id}')">✕</button>
+          </div>
+        </div>
+        <div id="msg-${m.id}" style="display:none;margin-top:1rem;padding:1rem;background:var(--bg);border-radius:.5rem;font-size:.85rem;line-height:1.7;white-space:pre-wrap;color:var(--text)">${m.message}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function toggleMessage(id) {
+  const el = document.getElementById('msg-' + id);
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    const m = messages.find(x => String(x.id) === String(id));
+    if (m && !m.read) {
+      m.read = true;
+      await fetch('/api/contacts/' + id + '/read', { method: 'PATCH' });
+      renderMessages();
+      document.getElementById('msg-' + id).style.display = 'block';
+    }
+  }
+}
+
+async function deleteMessage(id) {
+  if (!confirm('Supprimer ce message ?')) return;
+  try {
+    await api('DELETE', '/api/contacts/' + id);
+    messages = messages.filter(m => String(m.id) !== String(id));
+    renderMessages();
+    showToast('Message supprimé', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 
