@@ -299,10 +299,20 @@
       main { padding: 0 !important; }
     }
 
-    /* ── Mobile : zoom dynamique (calculé via JS) ── */
+    /* ── Mobile ── */
+    .cv-mobile-img { display: none; }
+
     @media (max-width: 860px) {
-      .cv-wrapper { padding: .25rem; overflow: hidden; }
+      .cv-card { display: none; }
       .cv-print-btn { display: none; }
+      .cv-mobile-img {
+        display: block;
+        width: 100%;
+        max-width: 560px;
+        margin: 0 auto;
+        border-radius: 1rem;
+        box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      }
     }
   </style>
 </head>
@@ -333,6 +343,8 @@
   </div>
 
   <div class="cv-wrapper">
+
+    <img class="cv-mobile-img" src="/images/cv-mobile.jpg" alt="CV Khalid LOTF">
 
     <div class="cv-print-btn">
       <button onclick="window.print()" class="cta-btn" style="font-size:.8rem;padding:.6rem 1.25rem">
@@ -533,22 +545,5 @@
 </footer>
 
 <script src="/js/script.js"></script>
-<script>
-  (function() {
-    var card = document.querySelector('.cv-card');
-    if (!card) return;
-    function scaleCv() {
-      var vw = window.innerWidth;
-      if (vw >= 880) {
-        card.style.zoom = '';
-        return;
-      }
-      var scale = (vw - 8) / 880;
-      card.style.zoom = Math.max(0.3, scale);
-    }
-    scaleCv();
-    window.addEventListener('resize', scaleCv);
-  })();
-</script>
 </body>
 </html>
