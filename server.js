@@ -250,7 +250,7 @@ app.delete('/api/projects/:id', requireAuth, async (req, res) => {
 
 // ── Upload images ─────────────────────────────────────────────────────────────
 
-app.post('/api/upload', requireAuth, multer({
+const uploadMiddleware = multer({
   storage: multer.diskStorage({
     destination(req, file, cb) {
       const dir = path.join(__dirname, 'uploads');
@@ -262,12 +262,20 @@ app.post('/api/upload', requireAuth, multer({
       cb(null, Date.now() + '-' + Math.random().toString(36).slice(2) + ext);
     }
   }),
-  limits: { fileSize: 15 * 1024 * 1024 },
+  limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter(req, file, cb) {
     /^image\//.test(file.mimetype) ? cb(null, true) : cb(new Error('Image uniquement'));
   }
-}).array('images', 20), (req, res) => {
-  res.json({ urls: (req.files || []).map(f => '/uploads/' + f.filename) });
+}).array('images', 20);
+
+app.post('/api/upload', requireAuth, (req, res) => {
+  uploadMiddleware(req, res, (err) => {
+    if (err) {
+      console.error('Upload error:', err.message);
+      return res.status(400).json({ error: err.message });
+    }
+    res.json({ urls: (req.files || []).map(f => '/uploads/' + f.filename) });
+  });
 });
 
 // ── Pages projet dynamiques ───────────────────────────────────────────────────
