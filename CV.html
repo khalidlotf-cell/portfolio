@@ -299,19 +299,14 @@
       main { padding: 0 !important; }
     }
 
-    /* ── Mobile ── */
-    @media (max-width: 680px) {
-      .cv-wrapper { padding: 1rem .75rem 3rem; }
-      .cv-header { grid-template-columns: 1fr; text-align: center; padding: 1.5rem 1rem; }
-      .cv-photo { margin: 0 auto; width: 110px; height: 110px; }
-      .cv-header-info h1 { font-size: 1.5rem; }
-      .cv-contacts { justify-content: center; }
-      .cv-body { grid-template-columns: 1fr; }
-      .cv-main { border-right: none; border-bottom: 1px solid #f0ede8; padding: 1.25rem 1rem; }
-      .cv-aside { padding: 1.25rem 1rem; }
-      .cv-tools { gap: .4rem; }
-      .cv-tool-chip { font-size: .72rem; padding: .3rem .6rem; }
+    /* ── Mobile : zoom pour garder le layout PC ── */
+    @media (max-width: 860px) {
+      .cv-wrapper { padding: .5rem; overflow: hidden; }
+      .cv-card { zoom: 0.65; }
       .cv-print-btn { display: none; }
+    }
+    @media (max-width: 540px) {
+      .cv-card { zoom: 0.42; }
     }
   </style>
 </head>
