@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 
   <style>
     /* ── CV Layout ── */
@@ -301,13 +301,17 @@
 
     /* ── Mobile ── */
     @media (max-width: 680px) {
-      .cv-header { grid-template-columns: 1fr; text-align: center; }
-      .cv-photo { margin: 0 auto; }
+      .cv-wrapper { padding: 1rem .75rem 3rem; }
+      .cv-header { grid-template-columns: 1fr; text-align: center; padding: 1.5rem 1rem; }
+      .cv-photo { margin: 0 auto; width: 110px; height: 110px; }
+      .cv-header-info h1 { font-size: 1.5rem; }
       .cv-contacts { justify-content: center; }
       .cv-body { grid-template-columns: 1fr; }
-      .cv-main { border-right: none; border-bottom: 1px solid #f0ede8; padding: 1.5rem; }
-      .cv-aside { padding: 1.5rem; }
-      .cv-header { padding: 1.5rem; }
+      .cv-main { border-right: none; border-bottom: 1px solid #f0ede8; padding: 1.25rem 1rem; }
+      .cv-aside { padding: 1.25rem 1rem; }
+      .cv-tools { gap: .4rem; }
+      .cv-tool-chip { font-size: .72rem; padding: .3rem .6rem; }
+      .cv-print-btn { display: none; }
     }
   </style>
 </head>
@@ -320,11 +324,11 @@
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links" id="navLinks">
-      <li><a href="index.html">Accueil</a></li>
-      <li><a href="projects.html">Projets</a></li>
-      <li><a href="a-propos.html">À Propos</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="CV.html" class="active">CV</a></li>
+      <li><a href="/">Accueil</a></li>
+      <li><a href="/projects.html">Projets</a></li>
+      <li><a href="/a-propos.html">À Propos</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/CV.html" class="active">CV</a></li>
     </ul>
   </div>
 </nav>
@@ -537,6 +541,6 @@
   </div>
 </footer>
 
-<script src="js/script.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>
