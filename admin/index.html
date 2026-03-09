@@ -644,6 +644,9 @@
             <label>Vidéos Vimeo</label>
             <div style="display:flex;gap:.5rem;align-items:stretch">
               <input type="text" id="vimeoInput" placeholder="URL ou ID Vimeo — ex: 1169881025" style="flex:1;padding:.75rem 1rem;border:1px solid var(--border);border-radius:.5rem;background:var(--bg);">
+              <label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;white-space:nowrap;color:var(--muted);cursor:pointer">
+                <input type="checkbox" id="vimeoVertical" style="width:1rem;height:1rem;accent-color:var(--accent)"> Verticale
+              </label>
               <button type="button" class="btn btn-ghost" onclick="addVimeoVideo()">+ Ajouter</button>
             </div>
             <div id="videosList" style="margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem"></div>
@@ -989,16 +992,18 @@ function addVimeoVideo() {
   const input = document.getElementById('vimeoInput');
   const id = extractVimeoId(input.value);
   if (!id) { showToast('URL Vimeo invalide', 'error'); return; }
-  if (projectVideos.includes(id)) { showToast('Vidéo déjà ajoutée', 'error'); return; }
-  projectVideos.push(id);
+  if (projectVideos.some(v => (typeof v === 'string' ? v : v.id) === id)) { showToast('Vidéo déjà ajoutée', 'error'); return; }
+  const vertical = document.getElementById('vimeoVertical').checked;
+  projectVideos.push({ id, vertical });
   input.value = '';
+  document.getElementById('vimeoVertical').checked = false;
   document.getElementById('fVideos').value = JSON.stringify(projectVideos);
   renderVideosList();
   showToast('Vidéo ajoutée', 'success');
 }
 
 function removeVideo(id) {
-  projectVideos = projectVideos.filter(v => v !== id);
+  projectVideos = projectVideos.filter(v => (typeof v === 'string' ? v : v.id) !== id);
   document.getElementById('fVideos').value = JSON.stringify(projectVideos);
   renderVideosList();
 }
@@ -1006,20 +1011,23 @@ function removeVideo(id) {
 function renderVideosList() {
   const container = document.getElementById('videosList');
   if (!projectVideos.length) { container.innerHTML = ''; return; }
-  container.innerHTML = projectVideos.map(id => `
+  container.innerHTML = projectVideos.map(v => {
+    const id = typeof v === 'string' ? v : v.id;
+    const vertical = typeof v === 'object' && v.vertical;
+    return `
     <div class="video-item">
       <div class="video-thumb">
         <img src="https://vumbnail.com/${id}.jpg" alt="Vimeo ${id}" onerror="this.style.display='none'">
       </div>
       <div class="video-info">
-        <span>Vimeo</span>
+        <span>Vimeo${vertical ? ' · Verticale' : ''}</span>
         <strong>${id}</strong>
       </div>
       <div class="video-item-actions">
         <button type="button" class="btn btn-danger btn-sm" onclick="removeVideo('${id}')">Supprimer</button>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 // ── Save project ───────────────────────────────────────────────────────────────
