@@ -1,6 +1,32 @@
-# 📱 Portfolio Khalid LOTF - Version Simple HTML/CSS/JS
+# Portfolio Khalid LOTF
 
-Bienvenue ! Ceci est une version **super simple** de votre portfolio en **HTML pur**, **CSS** et **JavaScript** - facile à modifier pour un débutant.
+Portfolio fullstack — Node.js + Express + PostgreSQL, hébergé sur **Render**.
+
+## Hébergement (Render)
+
+- **Site** : [khalid-lotf.fr](https://khalid-lotf.fr)
+- **Plateforme** : [render.com](https://render.com)
+- **Déploiement** : automatique à chaque push sur `main`
+- **Stack** : Node.js (Express) + PostgreSQL + Cloudinary (images)
+
+### Variables d'environnement requises sur Render
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | URL de connexion PostgreSQL |
+| `CLOUDINARY_CLOUD_NAME` | Nom du cloud Cloudinary |
+| `CLOUDINARY_API_KEY` | Clé API Cloudinary |
+| `CLOUDINARY_API_SECRET` | Secret API Cloudinary |
+| `ADMIN_PASSWORD` | Mot de passe du panel admin |
+
+### Commandes
+
+```bash
+# Lancer en local
+npm start
+
+# Le serveur tourne sur http://localhost:3000
+```
 
 ## 🚀 Comment l'utiliser
 
