@@ -412,12 +412,12 @@ app.get('/projets/:id', async (req, res, next) => {
         const vertical = typeof v === 'object' && v.vertical;
         if (vertical) {
           return `
-        <div style="max-width:360px;margin:0 auto 1.5rem;padding:177.78% 0 0 0;position:relative;">
+        <div style="max-width:360px;margin:0 auto 1.5rem;">
           <iframe src="https://player.vimeo.com/video/${id}?badge=0&autopause=0&player_id=0&app_id=58479"
             frameborder="0"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
-            style="position:absolute;top:0;left:0;width:100%;height:100%;"
+            style="width:100%;aspect-ratio:9/16;display:block;"
             title="Vidéo"></iframe>
         </div>`;
         }
